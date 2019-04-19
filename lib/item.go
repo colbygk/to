@@ -1,26 +1,28 @@
 package lib
 
 import (
-	"unicode"
+  "regexp"
 )
 
+var toDoItem = regexp.MustCompile(`(\s+)?([-/xrn!\\])?(\s+)?(.+)$`)
+
 func ReadItem(line *[]byte) (depth int, leading []byte, content []byte) {
-    var cursor int
-	cursor = 0
-    leading = nil
+  leading = []byte{'\\'}
+  content = nil
+  depth = 0
 
-	for cursor < len(*line) && unicode.IsSpace(rune((*line)[cursor])) {
-		cursor += 1
-	}
-    depth = cursor
-
-    cursor += 1
-    for cursor < len(*line) && unicode.IsSpace(rune((*line)[cursor]))  {
-        cursor += 1
+  subitems := toDoItem.FindSubmatch(*line)
+  if len(subitems) > 1 {
+    depth = len(subitems[1])
+    if len(subitems) > 2 {
+      leading = subitems[2]
+      if len(subitems) > 4 {
+        content = subitems[4]
+      } else {
+        content = subitems[3]
+      }
     }
-    cursor = min(cursor, len(*line))
-    leading = (*line)[depth:cursor]
-    content = (*line)[cursor:]
+  }
 
-	return
+  return
 }
