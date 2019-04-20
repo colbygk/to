@@ -7,6 +7,7 @@ import (
   "hash"
 )
 
+// ToTree tracking tree structure
 type ToTree struct {
   Content   string    `json:"content"`
   Depth     int       `json:"depth,string"`
@@ -32,6 +33,7 @@ func max(a, b int) int {
   return a
 }
 
+// PrintTree output the text format of a ToTree
 func PrintTree(tree *ToTree) {
   k := len(tree.Branches)
   n := 0
@@ -39,10 +41,11 @@ func PrintTree(tree *ToTree) {
     s := fmt.Sprintf("%%d %s %%%ds\n", tree.Branches[n].State, tree.Branches[n].Depth+len(tree.Branches[n].Content))
     fmt.Printf(s, tree.Branches[n].LineStart, tree.Branches[n].Content)
     PrintTree(tree.Branches[n])
-    n += 1
+    n++
   }
 }
 
+// PrintJSONTree output the marshalled by product of a ToTree in JSON format
 func PrintJSONTree(tree *ToTree) {
   jsonTree, err := json.Marshal(*tree)
   if err != nil {
@@ -81,9 +84,9 @@ func addBranch(parent, branch *ToTree, trackingFile *ToFile, startLine int) (i i
 
     // Four possibilties for each new entry:
     // 1) This is a continuation of the previous entry, depth does not matter
-    // 2) This is a sibling entry: new depth == old depth
-    // 3) This is a new branch: new depth > old depth
-    // 4) This is the end of this particular branch, new depth < old depth
+    // 2) This is a sibling entry: new depth == current depth
+    // 3) This is a new branch: new depth > current depth
+    // 4) This is the end of this particular branch, new depth < current depth
 
     // 1) continuation
     if UnknownState(state) && Symbol(state[0]) != Continue {
@@ -106,6 +109,7 @@ func addBranch(parent, branch *ToTree, trackingFile *ToFile, startLine int) (i i
   return
 }
 
+// ParseTracking Parses a tracking file into a ToTree and returns it, or error */
 func ParseTracking(trackingFile *ToFile) (root *ToTree, err error) {
   root = newRoot()
 
