@@ -58,15 +58,35 @@ func getArgs() []string {
 }
 
 func parseCommands() {
+  var trackingFile *toLib.ToFile
+  var err error
+
   args := getArgs()
   if len(args) < 1 || *printHelp {
     flag.PrintDefaults()
     os.Exit(1)
   }
   switch args[0] {
-  case "day":
+  case "day": {
+      toLib.CopyMostRecentTrackingFile(TrackingPath, *HowFarBack)
+      trackingFile, err =
+        toLib.OpenTracking(toLib.GetFQTrackingPath(TrackingPath))
+      if err != nil {
+        fmt.Printf("Unable to open %s\n*%s!\n",
+          toLib.GetFQTrackingPath(TrackingPath),
+          err)
+        os.Exit(-1)
+      }      
+  }
   case "do":
-  case "json":
+  case "json": {
+      trackingTree, err := toLib.ParseTracking(trackingFile)
+      if err != nil {
+        fmt.Printf("Error: %s", err)
+        os.Exit(-1)
+      }
+      toLib.PrintJSONTree(trackingTree)      
+  }
   case "morrow":
   default:
     fmt.Println("Unknown command")
@@ -76,31 +96,13 @@ func parseCommands() {
 }
 
 func init() {
+  TrackingPath = toLib.GetTrackingPath(*Year, *Mon, *Day, *ProjectName)
   handleFlags()
   parseCommands()
-
-  TrackingPath = toLib.GetTrackingPath(*Year, *Mon, *Day, *ProjectName)
 }
 
 func main() {
-  var trackingFile *toLib.ToFile
-  var err error
 
-  toLib.CopyMostRecentTrackingFile(TrackingPath, *HowFarBack)
-  trackingFile, err =
-    toLib.OpenTracking(toLib.GetFQTrackingPath(TrackingPath))
-  if err != nil {
-    fmt.Printf("Unable to open %s\n*%s!\n",
-      toLib.GetFQTrackingPath(TrackingPath),
-      err)
-    os.Exit(-1)
-  }
 
-  trackingTree, err := toLib.ParseTracking(trackingFile)
-  if err != nil {
-    fmt.Printf("Error: %s", err)
-    os.Exit(-1)
-  }
-  toLib.PrintJSONTree(trackingTree)
   // toLib.PrintJSONTree(trackingTree)
 }
