@@ -15,7 +15,7 @@ type ToTree struct {
   NumLines  int       `json:"numLines,string"`  // how many were part of this one
   State     []byte    `json:"state"`
   parent    *ToTree   // can only have one root
-  Branches  []*ToTree `json:"branches,omitempty"` // can have many branches
+  Branches  []*ToTree `json:"branches"` // can have many branches
   Hash      hash.Hash `json:"hash,string"`
 }
 

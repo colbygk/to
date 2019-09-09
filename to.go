@@ -76,7 +76,7 @@ func parseCommands() {
           toLib.GetFQTrackingPath(TrackingPath),
           err)
         os.Exit(-1)
-      }      
+      }
   }
   case "do":
   case "json": {
@@ -85,9 +85,23 @@ func parseCommands() {
         fmt.Printf("Error: %s", err)
         os.Exit(-1)
       }
-      toLib.PrintJSONTree(trackingTree)      
+      toLib.PrintJSONTree(trackingTree)
   }
-  case "morrow":
+  case "morrow": // TODO A command to show upcoming items that you may want to
+                 // pay attention to in the immediate 24 hours ahead
+                 // aka to morrow aka tomorrow
+  case "o": // TODO A command to link previous working directories into current one
+            // i.e. ln -s ../previousday/somedir somedir
+            // first, search for it in previous days
+            // when found, soft link to it, creates a chain of soft links
+            // Should potentially include a hard link instead/if possible
+            // not crossing filesystems
+            // aka to o someworkingdir aka too ...
+  case "p": {
+      // Print out the current day path
+      // Should this also copy over the tracking file(s)?
+      fmt.Printf("%s", toLib.GetDirTrackingPath(TrackingPath))
+  }
   default:
     fmt.Println("Unknown command")
     flag.PrintDefaults()

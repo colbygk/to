@@ -81,7 +81,7 @@ func getFileName(t *TemporalLocation) string {
   return t.projectName + ".to"
 }
 
-func getDirTrackingPath(t *TemporalLocation) string {
+func GetDirTrackingPath(t *TemporalLocation) string {
   return filepath.FromSlash(getLocation(t))
 }
 
@@ -96,8 +96,8 @@ func getLocation(on *TemporalLocation) string {
 }
 
 func CreateCurrentDayDir(TrackingPath *TemporalLocation) {
-  if !DirExists(getDirTrackingPath(TrackingPath)) {
-    err := os.MkdirAll(getDirTrackingPath(TrackingPath), 0755)
+  if !DirExists(GetDirTrackingPath(TrackingPath)) {
+    err := os.MkdirAll(GetDirTrackingPath(TrackingPath), 0755)
     if err != nil {
       panic(err)
     }
@@ -110,11 +110,11 @@ func CopyMostRecentTrackingFile(TrackingPath *TemporalLocation, howFar int) erro
     fmt.Printf("Looking for tracking file\n")
     olde := MostRecentTracking(TrackingPath, howFar)
     if olde.loc != TrackingPath.loc {
-      fmt.Printf("  found and copying from: %s\n", getDirTrackingPath(olde))
+      fmt.Printf("  found and copying from: %s\n", GetDirTrackingPath(olde))
       return CopyFile(GetFQTrackingPath(olde), GetFQTrackingPath(TrackingPath))
     } else {
       return errors.New(fmt.Sprintf("Never found %s! Create it %s\n",
-        getFileName(TrackingPath), getDirTrackingPath(TrackingPath)))
+        getFileName(TrackingPath), GetDirTrackingPath(TrackingPath)))
     }
   }
   return nil
